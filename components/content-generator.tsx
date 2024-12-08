@@ -35,7 +35,6 @@ interface TrendingResponse {
 interface FormValues {
   input: string;
   tone: string;
-  type: string;
   platform: string;
   trending?: string;
   outputType: OutputType;
@@ -62,18 +61,11 @@ const toneOptions: Option[] = [
   { value: 'formal', label: 'Formal' },
 ];
 
-const typeOptions: Option[] = [
-  { value: 'blog', label: 'Blog Post' },
-  { value: 'social', label: 'Social Media' },
-  { value: 'email', label: 'Email' },
-  { value: 'article', label: 'Article' },
-];
-
 const platformOptions: Option[] = [
+  { value: 'news', label: 'News' },
   { value: 'twitter', label: 'Twitter' },
   { value: 'linkedin', label: 'LinkedIn' },
   { value: 'facebook', label: 'Facebook' },
-  { value: 'instagram', label: 'Instagram' },
 ];
 
 const outputTypeOptions: Option[] = [
@@ -106,7 +98,7 @@ const useStyles = createStyles(({ token, css }) => ({
   `,
   formGrid: css`
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
     margin-bottom: 1.5rem;
 
@@ -221,10 +213,15 @@ export default function ContentGenerator() {
 
   const getPrompt = async (values: FormValues): Promise<PromptResponse> => {
     try {
+      const requestData = {
+        ...values,
+        type: values.outputType,
+      };
+
       const response = await fetch(`${API_BASE_URL}/get_prompt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify(requestData),
       });
 
       if (!response.ok) {
@@ -233,7 +230,7 @@ export default function ContentGenerator() {
 
       return await response.json();
     } catch (error) {
-      message.error('Failed to get prompt');
+      console.error('Failed to get prompt:', error);
       throw error;
     }
   };
@@ -378,19 +375,6 @@ export default function ContentGenerator() {
               <Select<string>
                 options={toneOptions}
                 placeholder="Select tone"
-                className="w-full"
-              />
-            </Form.Item>
-
-            <Form.Item
-              name="type"
-              label="Type"
-              rules={[{ required: true }]}
-              className="m-0"
-            >
-              <Select<string>
-                options={typeOptions}
-                placeholder="Select type"
                 className="w-full"
               />
             </Form.Item>

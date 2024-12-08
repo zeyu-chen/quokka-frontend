@@ -45,7 +45,7 @@ export function TrendingTopics({ topics, onTopicClick }: TrendingTopicsProps) {
 
   return (
     <div className={styles.container}>
-      <div className="text-sm font-medium mb-2">热门话题</div>
+      <div className="text-sm font-medium mb-2">Trending Topics</div>
       <div className={styles.topics}>
         {topics.map((topic) => (
           <button
